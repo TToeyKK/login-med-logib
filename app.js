@@ -58,23 +58,6 @@ app.post('/register', jsonParser, function (req, res, next) {
   });
 })
 
-app.post('/register', jsonParser, function (req, res, next) {
-  bcrypt.hash(req.body.password, saltRounds, function(err, hash) {  
-    // execute will internally call prepare and query
-    connection.execute(
-      'INSERT INTO users (email, password, fname, lname) VALUES (?,?,?,?)',
-      [req.body.email, hash, req.body.fname, req.body.lname],
-      function(err, results, fields) {
-        if (err){
-          res.json({status: 'error', message: err})
-          return
-      }
-      res.json({status: 'OK'})
-      }
-    );
-  });
-})
-
 app.post('/login', jsonParser, function (req, res, next) {
   connection.execute(
     'SELECT * FROM users WHERE email=?',
@@ -99,18 +82,18 @@ app.post('/login', jsonParser, function (req, res, next) {
   );  
 })
 
-// app.post('/authen', jsonParser, function (req, res, next) {
-//   try{
-//       const token = req.headers.authorization.split(' ')[1]
+app.post('/authen', jsonParser, function (req, res, next) {
+  try{
+      const token = req.headers.authorization.split(' ')[1]
   
-//       // verify a token symmetric - synchronous
-//       var decoded = jwt.verify(token, secret);
-//       res.json({status:'ok',decoded})
-//   }
-//   catch(err){
-//       res.json({status:'error',message:err.message})
-//   }
-// })
+      // verify a token symmetric - synchronous
+      var decoded = jwt.verify(token, secret);
+      res.json({status:'ok',decoded})
+  }
+  catch(err){
+      res.json({status:'error',message:err.message})
+  }
+})
 
 // app.post('/authen', jsonParser, function (req, res, next){
 //   try{
